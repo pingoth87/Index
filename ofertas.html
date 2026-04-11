@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HELLWEAR — Ofertas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="hw-style.css"/>
+  <style>
+    .offer-grid {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border);
+      max-width: 1100px; margin: 0 auto 2rem;
+      padding: 0 2rem;
+    }
+    .offer-stat {
+      background: var(--panel); padding: 2rem;
+      text-align: center;
+    }
+    .offer-stat-num {
+      font-family: var(--title); font-size: 3rem;
+      color: var(--red-lit); line-height: 1; margin-bottom: 0.5rem;
+    }
+    .offer-stat-label {
+      font-family: var(--mono); font-size: 10px;
+      color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase;
+    }
+    .pct-badge {
+      display: inline-block;
+      background: var(--red); color: var(--white);
+      font-family: var(--title); font-size: 1.2rem;
+      padding: 6px 18px; margin-left: 8px;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+    @media (max-width:768px) { .offer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="location.href='index.html'">⛧ <span>HELL</span>WEAR</div>
+    <ul class="nav-links">
+      <li><a href="catalogo.html" data-i18n="nav_catalogo">Catálogo</a></li>
+      <li><a href="categorias.html" data-i18n="nav_categorias">Categorías</a></li>
+      <li><a href="ofertas.html" data-i18n="nav_ofertas">Ofertas</a></li>
+      <li><a href="nosotros.html" data-i18n="nav_nosotros">Nosotros</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button title="Buscar" onclick="toggleSearch()">🔍</button>
+      <button title="Wishlist" id="wishBtn">♡ <span class="wish-count" id="wishCount">0</span></button>
+      <button title="Carrito" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">☰</button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="menu-sigil">⛧</span>
+    <a href="catalogo.html" onclick="closeMobileMenu()">Catálogo</a>
+    <a href="categorias.html" onclick="closeMobileMenu()">Categorías</a>
+    <a href="ofertas.html" onclick="closeMobileMenu()">Ofertas</a>
+    <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+    <span class="menu-sigil">⛧</span>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <input type="text" placeholder="⛧  Buscar oferta..." id="searchInput" oninput="handleSearch(this.value)"/>
+    <button onclick="toggleSearch()">✕</button>
+  </div>
+
+  <!-- HERO OFERTA -->
+  <div style="max-width:1100px;margin:3rem auto 2rem;padding:0 2rem;">
+    <div class="offer-hero-inner">
+      <div class="offer-pct">-30%</div>
+      <div class="offer-label">Oferta infernal de temporada</div>
+      <div style="margin-top:1.5rem;display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;">
+        <div class="promo-countdown" style="gap:1.2rem;">
+          <div class="cd-block"><span class="cd-num" id="cdH">08</span><span class="cd-label">horas</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-block"><span class="cd-num" id="cdM">24</span><span class="cd-label">min</span></div>
+          <span class="cd-sep">:</span>
+          <div class="cd-block"><span class="cd-num" id="cdS">00</span><span class="cd-label">seg</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="offer-grid">
+    <div class="offer-stat">
+      <div class="offer-stat-num" id="saleCount">0</div>
+      <div class="offer-stat-label">Productos en oferta</div>
+    </div>
+    <div class="offer-stat">
+      <div class="offer-stat-num">-30%</div>
+      <div class="offer-stat-label">Descuento máximo</div>
+    </div>
+    <div class="offer-stat">
+      <div class="offer-stat-num">🔥</div>
+      <div class="offer-stat-label">Solo por tiempo limitado</div>
+    </div>
+  </div>
+
+  <!-- TABS CATEGORÍA EN OFERTA -->
+  <div class="section-header">
+    <div class="section-eyebrow">Selecciona</div>
+    <h2 class="section-title">OFER<span>TAS</span></h2>
+  </div>
+  <div class="divider"></div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Categoría:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Todas</button>
+    <button class="filter-btn" onclick="setFilter('camisetas',this)">👕 Camisetas</button>
+    <button class="filter-btn" onclick="setFilter('sudaderas',this)">🧥 Sudaderas</button>
+    
+    <button class="filter-btn" onclick="setFilter('accesorios',this)">🧤 Accesorios</button>
+    
+    <button class="filter-btn" onclick="setFilter('limitada',this)">⛧ Limitada</button>
+  </div>
+
+  <div class="products-grid" id="productsGrid"></div>
+
+  <!-- TAMBIÉN TE PUEDE INTERESAR -->
+  <div class="section-header" style="padding-top:1rem;">
+    <div class="section-eyebrow">Sin descuento pero</div>
+    <h2 class="section-title">MUY POPU<span>LARES</span></h2>
+  </div>
+  <div class="divider"></div>
+  <div class="products-grid" id="popularGrid"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-brand">
+      <div class="foot-logo">⛧ <span>HELL</span>WEAR</div>
+      <p class="foot-desc">Ropa para los que viven entre la oscuridad y el estilo.</p>
+    </div>
+    <div class="foot-col"><h4 data-i18n="foot_tienda">Tienda</h4><ul>
+      <li onclick="location.href='catalogo.html'">Catálogo</li>
+      <li onclick="location.href='categorias.html'">Categorías</li>
+    </ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_ayuda">Ayuda</h4><ul><li>FAQ</li><li>Envíos</li><li>Devoluciones</li></ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_siguenos">Síguenos</h4><ul><li>Instagram</li><li>TikTok</li><li>Twitter/X</li></ul></div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2025 HELLWEAR</span>
+      <span class="foot-sigil">⛧ ⛧ ⛧</span>
+    </div>
+  </footer>
+
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div class="cart-head-title" data-i18n="carrito_titulo">⛧ CARRITO</div>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label" data-i18n="carrito_total">Total</span>
+        <span class="cart-total-amount" id="cartTotal">$0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()" data-i18n="carrito_pagar">Proceder al pago</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    let currentFilter = 'all';
+
+    const saleProducts    = PRODUCTS.filter(p => p.badge === 'sale');
+    const popularProducts = PRODUCTS.filter(p => p.badge === 'hot').slice(0,4);
+
+    document.getElementById('saleCount').textContent = saleProducts.length;
+
+    function setFilter(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderGrid();
+    }
+
+    function renderGrid() {
+      let list = saleProducts;
+      if (currentFilter !== 'all') list = list.filter(p => p.cat === currentFilter);
+      const grid = document.getElementById('productsGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><span class="icon">💸</span>Sin ofertas en esta categoría ahora mismo.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map(p => productCard(p)).join('');
+    }
+
+    // Popular grid
+    document.getElementById('popularGrid').innerHTML = popularProducts.map(p => productCard(p)).join('');
+
+    // Countdown
+    let secs = 8*3600+24*60;
+    setInterval(()=>{
+      secs=Math.max(0,secs-1);
+      document.getElementById('cdH').textContent=String(Math.floor(secs/3600)).padStart(2,'0');
+      document.getElementById('cdM').textContent=String(Math.floor((secs%3600)/60)).padStart(2,'0');
+      document.getElementById('cdS').textContent=String(secs%60).padStart(2,'0');
+    },1000);
+
+    function toggleSearch() {
+      document.getElementById('searchBar').classList.toggle('open');
+      if (document.getElementById('searchBar').classList.contains('open'))
+        document.getElementById('searchInput').focus();
+    }
+    function handleSearch(val) {
+      if (val.trim()) location.href = 'catalogo.html?q=' + encodeURIComponent(val);
+    }
+
+    renderGrid();
+  </script>
+
+  <script>
+    function toggleMobileMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.textContent = m.classList.contains('open') ? '✕' : '☰';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').textContent = '☰';
+    }
+  </script>
+  <script src="hw-i18n.js"></script>
+  <script src="hw-data.js"></script>
+  <script src="hw-cart.js"></script>
+  <script src="hw-contact.js"></script>
+</body>
+</html>

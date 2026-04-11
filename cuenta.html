@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HELLWEAR — Mi Cuenta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="hw-style.css"/>
+  <style>
+    .cuenta-wrap {
+      max-width: 960px; margin: 0 auto;
+      padding: 3rem 2rem 4rem;
+      position: relative; z-index: 1;
+    }
+    .cuenta-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+    }
+    .cuenta-title { font-family: var(--title); font-size: 2.5rem; letter-spacing: 0.06em; }
+    .cuenta-title span { color: var(--red-lit); }
+
+    /* Tabs */
+    .cuenta-tabs {
+      display: flex; gap: 0; border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem; overflow-x: auto;
+    }
+    .cuenta-tab {
+      font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 12px 20px; cursor: pointer;
+      color: var(--muted); border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: color 0.2s;
+    }
+    .cuenta-tab.active { color: var(--white); border-bottom-color: var(--red-lit); }
+    .cuenta-tab:hover:not(.active) { color: var(--white); }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Perfil */
+    .perfil-card {
+      background: var(--panel); border: 1px solid var(--border);
+      padding: 2rem; display: grid;
+      grid-template-columns: auto 1fr; gap: 1.5rem; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .perfil-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: var(--red-dim); display: flex; align-items: center; justify-content: center;
+      font-family: var(--title); font-size: 2rem; color: var(--white);
+      flex-shrink: 0;
+    }
+    .perfil-nombre { font-family: var(--title); font-size: 1.5rem; letter-spacing: 0.06em; margin-bottom: 4px; }
+    .perfil-email { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-bottom: 4px; }
+    .perfil-fecha { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+    /* Stats cuenta */
+    .cuenta-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: var(--border); margin-bottom: 2rem;
+    }
+    .cuenta-stat { background: var(--card); padding: 1.25rem; text-align: center; }
+    .cs-num { font-family: var(--title); font-size: 2rem; color: var(--red-lit); line-height: 1; margin-bottom: 4px; }
+    .cs-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+
+    /* Pedidos */
+    .pedido-card {
+      background: var(--card); border: 1px solid var(--border);
+      margin-bottom: 1px; overflow: hidden;
+    }
+    .pedido-head {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 1.25rem; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .pedido-head:hover { background: rgba(255,255,255,0.02); }
+    .pedido-id { font-family: var(--title); font-size: 1.1rem; color: var(--red-lit); min-width: 40px; }
+    .pedido-fecha { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; flex: 1; }
+    .pedido-total { font-family: var(--mono); font-size: 14px; color: var(--white); }
+    .pedido-estado {
+      font-family: var(--mono); font-size: 9px; padding: 3px 10px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      background: rgba(37,211,102,0.12); color: #5dff9a;
+      border: 1px solid rgba(37,211,102,0.2);
+    }
+    .pedido-body { display: none; border-top: 1px solid var(--border); padding: 1rem 1.25rem; }
+    .pedido-body.open { display: block; }
+
+    .pedido-item {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .pedido-item:last-child { border-bottom: none; }
+    .pedido-item-img {
+      width: 48px; height: 60px; background: var(--panel);
+      flex-shrink: 0; display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem; overflow: hidden;
+    }
+    .pedido-item-img img { width:100%; height:100%; object-fit:cover; }
+    .pedido-item-name { font-size: 13px; flex: 1; }
+    .pedido-item-qty { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .pedido-item-price { font-family: var(--mono); font-size: 12px; color: var(--red-lit); }
+
+    /* Empty states */
+    .empty-cuenta {
+      text-align: center; padding: 3rem 1rem;
+      color: var(--muted); font-family: var(--mono); font-size: 11px;
+      letter-spacing: 0.1em;
+    }
+    .empty-cuenta .e-icon { font-size: 3rem; display: block; margin-bottom: 1rem; opacity: 0.4; }
+
+    /* Loading */
+    .loading {
+      text-align: center; padding: 2rem;
+      font-family: var(--mono); font-size: 11px; color: var(--muted);
+      letter-spacing: 0.15em;
+    }
+
+    @media (max-width: 480px) {
+      .perfil-card { grid-template-columns: 1fr; text-align: center; }
+      .perfil-avatar { margin: 0 auto; }
+      .cuenta-stats { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="location.href='index.html'">⛧ <span>HELL</span>WEAR</div>
+    <ul class="nav-links">
+      <li><a href="catalogo.html">Catálogo</a></li>
+      <li><a href="categorias.html">Categorías</a></li>
+      <li><a href="ofertas.html">Ofertas</a></li>
+      <li><a href="nosotros.html">Nosotros</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button title="Buscar">🔍</button>
+      <button title="Wishlist">♡ <span class="wish-count" id="wishCount">0</span></button>
+      <button id="userNavBtn" onclick="location.href='auth.html'">👤 Entrar</button>
+      <button title="Carrito" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">☰</button>
+  </nav>
+
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="menu-sigil">⛧</span>
+    <a href="catalogo.html" onclick="closeMobileMenu()">Catálogo</a>
+    <a href="categorias.html" onclick="closeMobileMenu()">Categorías</a>
+    <a href="ofertas.html" onclick="closeMobileMenu()">Ofertas</a>
+    <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+    <span class="menu-sigil">⛧</span>
+  </div>
+
+  <div class="cuenta-wrap" id="cuentaWrap" style="display:none">
+
+    <div class="cuenta-header">
+      <div>
+        <div class="cuenta-title">MI <span>CUENTA</span></div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.2em;margin-top:4px;">
+          HELLWEAR — PANEL DE USUARIO
+        </div>
+      </div>
+      <button class="btn-ghost" onclick="logout()" style="font-size:11px;">⛧ Cerrar sesión</button>
+    </div>
+
+    <!-- TABS -->
+    <div class="cuenta-tabs">
+      <div class="cuenta-tab active" onclick="switchTab('perfil',this)">👤 Perfil</div>
+      <div class="cuenta-tab" onclick="switchTab('pedidos',this)">📦 Mis pedidos</div>
+      <div class="cuenta-tab" onclick="switchTab('carrito',this)">🛒 Carrito guardado</div>
+    </div>
+
+    <!-- PERFIL -->
+    <div class="tab-content active" id="tab-perfil">
+      <div class="perfil-card" id="perfilCard">
+        <div class="loading">Cargando...</div>
+      </div>
+      <div class="cuenta-stats">
+        <div class="cuenta-stat">
+          <div class="cs-num" id="st-pedidos">—</div>
+          <div class="cs-label">Pedidos realizados</div>
+        </div>
+        <div class="cuenta-stat">
+          <div class="cs-num" id="st-total">—</div>
+          <div class="cs-label">Total gastado</div>
+        </div>
+        <div class="cuenta-stat">
+          <div class="cs-num" id="st-carrito">—</div>
+          <div class="cs-label">Productos en carrito</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="location.href='catalogo.html'">Ver catálogo →</button>
+        <button class="btn-ghost" onclick="switchTab('pedidos', document.querySelectorAll('.cuenta-tab')[1])">Ver mis pedidos →</button>
+      </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="tab-content" id="tab-pedidos">
+      <div id="pedidosList"><div class="loading">Cargando pedidos...</div></div>
+    </div>
+
+    <!-- CARRITO GUARDADO -->
+    <div class="tab-content" id="tab-carrito">
+      <div id="carritoList"><div class="loading">Cargando carrito...</div></div>
+    </div>
+
+  </div>
+
+  <!-- Si no hay sesión -->
+  <div id="noSesion" style="display:none;text-align:center;padding:6rem 2rem;">
+    <div style="font-size:4rem;margin-bottom:1rem;">⛧</div>
+    <div style="font-family:var(--title);font-size:2rem;margin-bottom:1rem;">Acceso restringido</div>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:2rem;">Necesitas iniciar sesión para ver tu cuenta.</p>
+    <button class="btn-primary" onclick="location.href='auth.html'">Iniciar sesión ⛧</button>
+  </div>
+
+  <!-- CARRITO DRAWER -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div class="cart-head-title">⛧ CARRITO</div>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label">Total</span>
+        <span class="cart-total-amount" id="cartTotal">$0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()">Proceder al pago</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="hw-data.js"></script>
+  <script src="hw-auth.js"></script>
+  <script>
+    const API = 'http://localhost:3000/api';
+
+    // ── Verificar sesión y cargar datos ────────────────────
+    document.addEventListener('DOMContentLoaded', async () => {
+      const sesion = await verificarSesion();
+      if (!sesion) {
+        document.getElementById('noSesion').style.display = 'block';
+        return;
+      }
+      document.getElementById('cuentaWrap').style.display = 'block';
+      await cargarPerfil();
+      await cargarPedidos();
+      await cargarCarritoTab();
+    });
+
+    function switchTab(id, el) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.cuenta-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-'+id).classList.add('active');
+      if (el) el.classList.add('active');
+    }
+
+    // ── Perfil ─────────────────────────────────────────────
+    async function cargarPerfil() {
+      const u = usuarioActual;
+      if (!u) return;
+      const initiales = u.nombre.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+
+      document.getElementById('perfilCard').innerHTML = `
+        <div class="perfil-avatar">${initiales}</div>
+        <div>
+          <div class="perfil-nombre">${u.nombre}</div>
+          <div class="perfil-email">${u.email}</div>
+          <div class="perfil-fecha">Miembro desde ${new Date(u.creado_en||Date.now()).toLocaleDateString('es-CO',{year:'numeric',month:'long'})}</div>
+        </div>`;
+
+      // Stats
+      const [pedRes, carRes] = await Promise.all([
+        fetch(API+'/pedidos',  {credentials:'include'}).then(r=>r.json()),
+        fetch(API+'/carrito',  {credentials:'include'}).then(r=>r.json())
+      ]);
+
+      const pedidos = pedRes.pedidos || [];
+      const totalGastado = pedidos.reduce((s,p)=>s+p.total,0);
+      const cartItems    = carRes.items || [];
+
+      document.getElementById('st-pedidos').textContent = pedidos.length;
+      document.getElementById('st-total').textContent   = '$' + Math.round(totalGastado/1000)+'K';
+      document.getElementById('st-carrito').textContent = cartItems.reduce((s,i)=>s+i.cantidad,0);
+    }
+
+    // ── Pedidos ────────────────────────────────────────────
+    async function cargarPedidos() {
+      const data = await fetch(API+'/pedidos', {credentials:'include'}).then(r=>r.json());
+      const cont = document.getElementById('pedidosList');
+      const pedidos = data.pedidos || [];
+
+      if (!pedidos.length) {
+        cont.innerHTML = `<div class="empty-cuenta"><span class="e-icon">📦</span>Aún no has realizado ningún pedido.<br><br><button class="btn-primary" onclick="location.href='catalogo.html'">Ir al catálogo →</button></div>`;
+        return;
+      }
+
+      cont.innerHTML = pedidos.map(p => `
+        <div class="pedido-card">
+          <div class="pedido-head" onclick="togglePedido(${p.id})">
+            <div class="pedido-id">#${p.id}</div>
+            <div class="pedido-fecha">${new Date(p.creado_en).toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+            <div class="pedido-total">$${p.total.toLocaleString('es-CO')}</div>
+            <div class="pedido-estado">${p.estado}</div>
+          </div>
+          <div class="pedido-body" id="ped-${p.id}">
+            ${(p.items||[]).map(i=>`
+              <div class="pedido-item">
+                <div class="pedido-item-img">
+                  ${i.imagen ? `<img src="${i.imagen}" alt="${i.nombre}"/>` : '🛍️'}
+                </div>
+                <div class="pedido-item-name">${i.nombre}</div>
+                <div class="pedido-item-qty">x${i.cantidad}</div>
+                <div class="pedido-item-price">$${(i.precio*i.cantidad).toLocaleString('es-CO')}</div>
+              </div>`).join('')}
+          </div>
+        </div>`).join('');
+    }
+
+    function togglePedido(id) {
+      document.getElementById('ped-'+id)?.classList.toggle('open');
+    }
+
+    // ── Carrito tab ────────────────────────────────────────
+    async function cargarCarritoTab() {
+      const data = await fetch(API+'/carrito', {credentials:'include'}).then(r=>r.json());
+      const cont = document.getElementById('carritoList');
+      const items = data.items || [];
+
+      if (!items.length) {
+        cont.innerHTML = `<div class="empty-cuenta"><span class="e-icon">🛒</span>Tu carrito está vacío.<br><br><button class="btn-primary" onclick="location.href='catalogo.html'">Explorar productos →</button></div>`;
+        return;
+      }
+
+      const total = items.reduce((s,i)=>s+i.precio*i.cantidad,0);
+
+      cont.innerHTML = `
+        <div style="display:grid;gap:1px;background:var(--border);">
+          ${items.map(i=>`
+            <div style="background:var(--card);display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;">
+              <div style="width:60px;height:75px;background:var(--panel);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:2rem;">
+                ${i.imagen ? `<img src="${i.imagen}" style="width:100%;height:100%;object-fit:cover"/>` : '🛍️'}
+              </div>
+              <div style="flex:1;">
+                <div style="font-family:var(--title);font-size:0.95rem;margin-bottom:4px;">${i.nombre}</div>
+                <div style="font-family:var(--mono);font-size:12px;color:var(--red-lit);">$${i.precio.toLocaleString('es-CO')} × ${i.cantidad}</div>
+              </div>
+              <div style="font-family:var(--mono);font-size:14px;">$${(i.precio*i.cantidad).toLocaleString('es-CO')}</div>
+            </div>`).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:1.25rem 1.25rem 0;">
+          <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;">Total carrito</span>
+          <span style="font-family:var(--title);font-size:1.5rem;color:var(--red-lit);">$${total.toLocaleString('es-CO')}</span>
+        </div>
+        <div style="padding:1rem 1.25rem 0;display:flex;gap:1rem;">
+          <button class="btn-primary" onclick="irCheckout()">Finalizar compra ⛧</button>
+          <button class="btn-ghost" onclick="location.href='catalogo.html'">Seguir comprando</button>
+        </div>`;
+    }
+
+    async function irCheckout() {
+      const data = await fetch(API+'/checkout', {
+        method:'POST', credentials:'include',
+        headers:{'Content-Type':'application/json'}, body:'{}'
+      }).then(r=>r.json());
+
+      if (data.ok) {
+        showToast('¡Pedido #'+data.pedido_id+' realizado! 🔥');
+        localStorage.removeItem('hw_cart_server');
+        actualizarContadorCarrito([]);
+        await cargarPedidos();
+        await cargarCarritoTab();
+        switchTab('pedidos', document.querySelectorAll('.cuenta-tab')[1]);
+      } else {
+        showToast(data.error || 'Error al procesar', true);
+      }
+    }
+
+    function toggleMobileMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.textContent = m.classList.contains('open') ? '✕' : '☰';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').textContent = '☰';
+    }
+  </script>
+  <script src="hw-contact.js"></script>
+</body>
+</html>

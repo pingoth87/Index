@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HELLWEAR — Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="hw-style.css"/>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="location.href='index.html'">⛧ <span>HELL</span>WEAR</div>
+    <ul class="nav-links">
+      <li><a href="catalogo.html" data-i18n="nav_catalogo">Catálogo</a></li>
+      <li><a href="categorias.html" data-i18n="nav_categorias">Categorías</a></li>
+      <li><a href="ofertas.html" data-i18n="nav_ofertas">Ofertas</a></li>
+      <li><a href="nosotros.html" data-i18n="nav_nosotros">Nosotros</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button title="Buscar" onclick="toggleSearch()">🔍</button>
+      <button title="Wishlist" id="wishBtn">♡ <span class="wish-count" id="wishCount">0</span></button>
+      <button title="Carrito" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">☰</button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="menu-sigil">⛧</span>
+    <a href="catalogo.html" onclick="closeMobileMenu()">Catálogo</a>
+    <a href="categorias.html" onclick="closeMobileMenu()">Categorías</a>
+    <a href="ofertas.html" onclick="closeMobileMenu()">Ofertas</a>
+    <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+    <span class="menu-sigil">⛧</span>
+  </div>
+
+  <!-- SEARCH BAR -->
+  <div class="search-bar" id="searchBar">
+    <input type="text" placeholder="⛧  Buscar en el infierno..." id="searchInput" oninput="handleSearch(this.value)" onkeydown="if(event.key==='Enter')goSearch()"/>
+    <button onclick="toggleSearch()">✕</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow" data-i18n="hero_eyebrow">Nueva colección 2025</div>
+    <h1 class="hero-title">VISTE<br><span class="line2">EL CAOS</span></h1>
+    <p class="hero-sub" data-i18n="hero_sub">Ropa oscura, exclusiva y sin igual. Diseñada para quienes no pertenecen a este mundo.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="location.href='catalogo.html'">Ver colección</button>
+      <button class="btn-ghost" onclick="location.href='nosotros.html'">Lookbook ↗</button>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS PREVIEW -->
+  <section>
+    <div class="section-header">
+      <div class="section-eyebrow">Explorar</div>
+      <h2 class="section-title">CATE<span>GORÍAS</span></h2>
+    </div>
+    <div class="divider"></div>
+    <div class="categories-grid">
+      <div class="cat-card" onclick="location.href='categorias.html?cat=camisetas'">
+        <span class="cat-icon">👕</span>
+        <div class="cat-name">CAMISETAS</div>
+        <div class="cat-count">5 productos</div>
+      </div>
+      <div class="cat-card" onclick="location.href='categorias.html?cat=sudaderas'">
+        <span class="cat-icon">🧥</span>
+        <div class="cat-name">SUDADERAS</div>
+        <div class="cat-count">2 productos</div>
+      </div>
+      <div class="cat-card" onclick="location.href='categorias.html?cat=accesorios'">
+        <span class="cat-icon">🧤</span>
+        <div class="cat-name">ACCESORIOS</div>
+        <div class="cat-count">5 productos</div>
+      </div>
+      <div class="cat-card special" onclick="location.href='categorias.html?cat=limitada'">
+        <span class="cat-icon">⛧</span>
+        <div class="cat-name">EDICIÓN LIMITADA</div>
+        <div class="cat-count">2 productos</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DESTACADOS -->
+  <section>
+    <div class="section-header">
+      <div class="section-eyebrow">Lo más popular</div>
+      <h2 class="section-title">DESTA<span>CADOS</span></h2>
+    </div>
+    <div class="divider"></div>
+    <div class="products-grid" id="featuredGrid"></div>
+    <div style="text-align:center;padding:2rem;">
+      <button class="btn-ghost" onclick="location.href='catalogo.html'">Ver todo el catálogo →</button>
+    </div>
+  </section>
+
+  <!-- BANNER OFERTA -->
+  <section style="max-width:1100px;margin:2rem auto 4rem;padding:0 2rem;">
+    <div class="promo-inner">
+      <div class="promo-text">
+        <div class="promo-title">OFERTA INFERNAL</div>
+        <div class="promo-sub">30% OFF en toda la colección de temporada</div>
+      </div>
+      <div class="promo-countdown">
+        <div class="cd-block"><span class="cd-num" id="cdH">08</span><span class="cd-label">horas</span></div>
+        <span class="cd-sep">:</span>
+        <div class="cd-block"><span class="cd-num" id="cdM">24</span><span class="cd-label">min</span></div>
+        <span class="cd-sep">:</span>
+        <div class="cd-block"><span class="cd-num" id="cdS">00</span><span class="cd-label">seg</span></div>
+      </div>
+      <button class="btn-primary" onclick="location.href='ofertas.html'">Ver ofertas</button>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-brand">
+      <div class="foot-logo">⛧ <span>HELL</span>WEAR</div>
+      <p class="foot-desc">Ropa para los que viven entre la oscuridad y el estilo. Colecciones exclusivas que desafían lo convencional.</p>
+    </div>
+    <div class="foot-col"><h4 data-i18n="foot_tienda">Tienda</h4><ul>
+      <li onclick="location.href='catalogo.html'">Catálogo</li>
+      <li onclick="location.href='ofertas.html'">Ofertas</li>
+      <li onclick="location.href='categorias.html'">Categorías</li>
+    </ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_ayuda">Ayuda</h4><ul>
+      <li>FAQ</li><li>Envíos</li><li>Devoluciones</li><li>Tallas</li>
+    </ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_siguenos">Síguenos</h4><ul>
+      <li>Instagram</li><li>TikTok</li><li>Twitter/X</li>
+    </ul></div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2025 HELLWEAR — TODOS LOS DERECHOS RESERVADOS</span>
+      <span class="foot-sigil">⛧ ⛧ ⛧</span>
+    </div>
+  </footer>
+
+  <!-- CARRITO -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div class="cart-head-title" data-i18n="carrito_titulo">⛧ CARRITO</div>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label" data-i18n="carrito_total">Total</span>
+        <span class="cart-total-amount" id="cartTotal">$0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()" data-i18n="carrito_pagar">Proceder al pago</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script>
+    // Render featured (primeros 4)
+    const grid = document.getElementById('featuredGrid');
+    PRODUCTS.slice(0,8).forEach(p => { grid.innerHTML += productCard(p); });
+
+    // Countdown
+    let secs = 8*3600+24*60;
+    setInterval(()=>{
+      secs=Math.max(0,secs-1);
+      document.getElementById('cdH').textContent=String(Math.floor(secs/3600)).padStart(2,'0');
+      document.getElementById('cdM').textContent=String(Math.floor((secs%3600)/60)).padStart(2,'0');
+      document.getElementById('cdS').textContent=String(secs%60).padStart(2,'0');
+    },1000);
+
+    function toggleSearch(){
+      document.getElementById('searchBar').classList.toggle('open');
+      if(document.getElementById('searchBar').classList.contains('open'))
+        document.getElementById('searchInput').focus();
+    }
+    function handleSearch(v){}
+    function goSearch(){
+      const q=document.getElementById('searchInput').value;
+      if(q) location.href='catalogo.html?q='+encodeURIComponent(q);
+    }
+  </script>
+
+  <script>
+    function toggleMobileMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.textContent = m.classList.contains('open') ? '✕' : '☰';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').textContent = '☰';
+    }
+  </script>
+  <script src="hw-i18n.js"></script>
+  <script src="hw-data.js"></script>
+  <script src="hw-cart.js"></script>
+  <script src="hw-contact.js"></script>
+</body>
+</html>

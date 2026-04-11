@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HELLWEAR — Categorías</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="hw-style.css"/>
+  <style>
+    .cat-hero {
+      max-width: 1100px; margin: 0 auto 2rem; padding: 0 2rem;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: var(--border);
+    }
+    .cat-hero-left {
+      background: var(--panel);
+      padding: 3rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .cat-hero-right {
+      background: var(--card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9rem; min-height: 220px;
+      position: relative; overflow: hidden;
+    }
+    .cat-hero-right::before {
+      content: attr(data-icon);
+      position: absolute; font-size: 300px;
+      opacity: 0.06; pointer-events: none;
+    }
+    .cat-hero-title { font-family: var(--title); font-size: 3rem; letter-spacing: 0.08em; margin-bottom: 0.5rem; }
+    .cat-hero-title span { color: var(--red-lit); }
+    .cat-hero-count { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 1.5rem; }
+    .cat-hero-desc { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 320px; }
+
+    .cat-tabs {
+      max-width: 1100px; margin: 0 auto;
+      padding: 0 2rem;
+      display: flex; flex-wrap: wrap; gap: 1px;
+      background: var(--border);
+    }
+    .cat-tab {
+      background: var(--panel);
+      padding: 1.25rem 2rem;
+      cursor: pointer; flex: 1; min-width: 140px;
+      text-align: center; transition: background 0.2s;
+      position: relative;
+    }
+    .cat-tab::after {
+      content: ''; position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px; background: var(--red);
+      transform: scaleX(0); transition: transform 0.25s;
+    }
+    .cat-tab:hover { background: var(--card); }
+    .cat-tab:hover::after { transform: scaleX(1); }
+    .cat-tab.active { background: var(--card); }
+    .cat-tab.active::after { transform: scaleX(1); }
+    .cat-tab-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
+    .cat-tab-name { font-family: var(--title); font-size: 0.8rem; letter-spacing: 0.1em; display: block; }
+    .cat-tab-count { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 0.1em; }
+
+    @media (max-width: 768px) {
+      .cat-hero { grid-template-columns: 1fr; }
+      .cat-hero-right { min-height: 140px; }
+      .cat-hero-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="location.href='index.html'">⛧ <span>HELL</span>WEAR</div>
+    <ul class="nav-links">
+      <li><a href="catalogo.html" data-i18n="nav_catalogo">Catálogo</a></li>
+      <li><a href="categorias.html" data-i18n="nav_categorias">Categorías</a></li>
+      <li><a href="ofertas.html" data-i18n="nav_ofertas">Ofertas</a></li>
+      <li><a href="nosotros.html" data-i18n="nav_nosotros">Nosotros</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button title="Buscar" onclick="toggleSearch()">🔍</button>
+      <button title="Wishlist" id="wishBtn">♡ <span class="wish-count" id="wishCount">0</span></button>
+      <button title="Carrito" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">☰</button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="menu-sigil">⛧</span>
+    <a href="catalogo.html" onclick="closeMobileMenu()">Catálogo</a>
+    <a href="categorias.html" onclick="closeMobileMenu()">Categorías</a>
+    <a href="ofertas.html" onclick="closeMobileMenu()">Ofertas</a>
+    <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+    <span class="menu-sigil">⛧</span>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <input type="text" placeholder="⛧  Buscar producto..." id="searchInput" oninput="handleSearch(this.value)"/>
+    <button onclick="toggleSearch()">✕</button>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">CATE<span>GORÍAS</span></div>
+      <div class="page-header-sub">Selecciona una categoría para explorar</div>
+    </div>
+    <button class="btn-ghost" onclick="location.href='index.html'">← Inicio</button>
+  </div>
+  <div class="divider"></div>
+
+  <!-- TABS DE CATEGORÍA -->
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <!-- HERO DE CATEGORÍA SELECCIONADA -->
+  <div style="max-width:1100px;margin:1px auto 0;padding:0 2rem;">
+    <div class="cat-hero" style="margin:0;padding:0;">
+      <div class="cat-hero-left">
+        <div class="cat-hero-title" id="heroTitle">CAMI<span>SETAS</span></div>
+        <div class="cat-hero-count" id="heroCount">4 productos</div>
+        <p class="cat-hero-desc" id="heroDesc">Camisetas diseñadas para los que viven en la oscuridad. Materiales premium, diseños únicos.</p>
+        <div style="margin-top:1.5rem;">
+          <button class="btn-primary" onclick="location.href='catalogo.html?cat='+currentCat">Ver todo en catálogo →</button>
+        </div>
+      </div>
+      <div class="cat-hero-right" id="heroRight" data-icon="👕">👕</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTOS DE LA CATEGORÍA -->
+  <div class="section-header" style="padding-top:2rem;">
+    <div class="section-eyebrow" id="gridEyebrow">Camisetas</div>
+    <h2 class="section-title" id="gridTitle">EXPLO<span>RANDO</span></h2>
+  </div>
+  <div class="divider"></div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Ordenar:</span>
+    <select class="sort-select" onchange="setSort(this.value)" style="margin-left:0;">
+      <option value="default">Defecto</option>
+      <option value="price-asc">Precio: Menor</option>
+      <option value="price-desc">Precio: Mayor</option>
+      <option value="stars">Mejor valorados</option>
+    </select>
+  </div>
+
+  <div class="products-grid" id="productsGrid"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-brand">
+      <div class="foot-logo">⛧ <span>HELL</span>WEAR</div>
+      <p class="foot-desc">Ropa para los que viven entre la oscuridad y el estilo.</p>
+    </div>
+    <div class="foot-col"><h4 data-i18n="foot_tienda">Tienda</h4><ul>
+      <li onclick="location.href='catalogo.html'">Catálogo</li>
+      <li onclick="location.href='ofertas.html'">Ofertas</li>
+    </ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_ayuda">Ayuda</h4><ul><li>FAQ</li><li>Envíos</li><li>Devoluciones</li></ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_siguenos">Síguenos</h4><ul><li>Instagram</li><li>TikTok</li><li>Twitter/X</li></ul></div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2025 HELLWEAR</span>
+      <span class="foot-sigil">⛧ ⛧ ⛧</span>
+    </div>
+  </footer>
+
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div class="cart-head-title" data-i18n="carrito_titulo">⛧ CARRITO</div>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label" data-i18n="carrito_total">Total</span>
+        <span class="cart-total-amount" id="cartTotal">$0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()" data-i18n="carrito_pagar">Proceder al pago</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    let currentCat  = 'camisetas';
+    let currentSort = 'default';
+
+    const CAT_DESC = {
+      camisetas:  'Camisetas diseñadas para los que viven en la oscuridad. Materiales premium, diseños únicos.',
+      sudaderas:  'Sudaderas y hoodies para los días más fríos del infierno. Cálidas y de estilo demoledor.',
+      accesorios: 'Complementa tu atuendo con accesorios dignos del inframundo. Collares, gorros, cinturones y más.',
+      limitada:   'Piezas exclusivas de edición limitada. Una vez se van, no vuelven. Actúa rápido.',
+    };
+
+    function buildTabs() {
+      const container = document.getElementById('catTabs');
+      container.innerHTML = Object.entries(CAT_META).map(([key, val]) => {
+        const count = PRODUCTS.filter(p => p.cat === key).length;
+        return `<div class="cat-tab ${key===currentCat?'active':''}" onclick="selectCat('${key}',this)">
+          <span class="cat-tab-icon">${val.icon}</span>
+          <span class="cat-tab-name">${val.label}</span>
+          <span class="cat-tab-count">${count} productos</span>
+        </div>`;
+      }).join('');
+    }
+
+    function selectCat(cat, el) {
+      currentCat = cat;
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      updateHero();
+      renderGrid();
+      // Update URL without reload
+      history.replaceState(null,'','categorias.html?cat='+cat);
+    }
+
+    function updateHero() {
+      const meta  = CAT_META[currentCat];
+      const count = PRODUCTS.filter(p => p.cat === currentCat).length;
+      const titleParts = meta.label.toUpperCase().split('');
+      const half = Math.ceil(titleParts.length / 2);
+      const t1 = titleParts.slice(0, half).join('');
+      const t2 = titleParts.slice(half).join('');
+
+      document.getElementById('heroTitle').innerHTML = `${t1}<span>${t2}</span>`;
+      document.getElementById('heroCount').textContent = count + ' productos';
+      document.getElementById('heroDesc').textContent  = CAT_DESC[currentCat] || '';
+      document.getElementById('heroRight').textContent  = meta.icon;
+      document.getElementById('heroRight').setAttribute('data-icon', meta.icon);
+      document.getElementById('gridEyebrow').textContent = meta.label;
+    }
+
+    function setSort(val) {
+      currentSort = val;
+      renderGrid();
+    }
+
+    function renderGrid() {
+      let list = PRODUCTS.filter(p => p.cat === currentCat);
+      if (currentSort === 'price-asc')  list.sort((a,b) => a.price - b.price);
+      if (currentSort === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (currentSort === 'stars')      list.sort((a,b) => b.stars - a.stars);
+
+      const grid = document.getElementById('productsGrid');
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><span class="icon">🔍</span>No hay productos en esta categoría.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map(p => productCard(p)).join('');
+    }
+
+    function handleSearch(val) {
+      if (val.trim()) location.href = 'catalogo.html?q=' + encodeURIComponent(val);
+    }
+
+    function toggleSearch() {
+      document.getElementById('searchBar').classList.toggle('open');
+      if (document.getElementById('searchBar').classList.contains('open'))
+        document.getElementById('searchInput').focus();
+    }
+
+    // Init
+    const params = new URLSearchParams(location.search);
+    const catParam = params.get('cat');
+    if (catParam && CAT_META[catParam]) currentCat = catParam;
+
+    buildTabs();
+    updateHero();
+    renderGrid();
+  </script>
+
+  <script>
+    function toggleMobileMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.textContent = m.classList.contains('open') ? '✕' : '☰';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').textContent = '☰';
+    }
+  </script>
+  <script src="hw-i18n.js"></script>
+  <script src="hw-data.js"></script>
+  <script src="hw-cart.js"></script>
+  <script src="hw-contact.js"></script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HELLWEAR — Catálogo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Share+Tech+Mono&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="hw-style.css"/>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logo" onclick="location.href='index.html'">⛧ <span>HELL</span>WEAR</div>
+    <ul class="nav-links">
+      <li><a href="catalogo.html" data-i18n="nav_catalogo">Catálogo</a></li>
+      <li><a href="categorias.html" data-i18n="nav_categorias">Categorías</a></li>
+      <li><a href="ofertas.html" data-i18n="nav_ofertas">Ofertas</a></li>
+      <li><a href="nosotros.html" data-i18n="nav_nosotros">Nosotros</a></li>
+    </ul>
+    <div class="nav-icons">
+      <button title="Buscar" onclick="toggleSearch()">🔍</button>
+      <button title="Wishlist" id="wishBtn">♡ <span class="wish-count" id="wishCount">0</span></button>
+      <button title="Carrito" onclick="toggleCart()">🛒 <span class="cart-count" id="cartCount">0</span></button>
+    </div>
+    <button class="nav-hamburger" onclick="toggleMobileMenu()" id="hamburger">☰</button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <span class="menu-sigil">⛧</span>
+    <a href="catalogo.html" onclick="closeMobileMenu()">Catálogo</a>
+    <a href="categorias.html" onclick="closeMobileMenu()">Categorías</a>
+    <a href="ofertas.html" onclick="closeMobileMenu()">Ofertas</a>
+    <a href="nosotros.html" onclick="closeMobileMenu()">Nosotros</a>
+    <span class="menu-sigil">⛧</span>
+  </div>
+
+  <div class="search-bar" id="searchBar">
+    <input type="text" placeholder="⛧  Buscar producto..." id="searchInput" oninput="handleSearch(this.value)"/>
+    <button onclick="toggleSearch()">✕</button>
+  </div>
+
+  <div class="page-header">
+    <div>
+      <div class="page-header-title">CATÁ<span>LOGO</span></div>
+      <div class="page-header-sub" id="resultCount">24 productos</div>
+    </div>
+    <button class="btn-ghost" onclick="location.href='index.html'">← Inicio</button>
+  </div>
+  <div class="divider"></div>
+
+  <!-- FILTROS -->
+  <div class="filter-bar">
+    <span class="filter-label">Filtrar:</span>
+    <button class="filter-btn active" onclick="setFilter('all',this)">Todos</button>
+    <button class="filter-btn" onclick="setFilter('camisetas',this)">👕 Camisetas</button>
+    <button class="filter-btn" onclick="setFilter('sudaderas',this)">🧥 Sudaderas</button>
+    
+    <button class="filter-btn" onclick="setFilter('accesorios',this)">🧤 Accesorios</button>
+    
+    <button class="filter-btn" onclick="setFilter('limitada',this)">⛧ Limitada</button>
+    <select class="sort-select" onchange="setSort(this.value)">
+      <option value="default">Ordenar: Defecto</option>
+      <option value="price-asc">Precio: Menor</option>
+      <option value="price-desc">Precio: Mayor</option>
+      <option value="stars">Mejor valorados</option>
+      <option value="sale">En oferta</option>
+    </select>
+  </div>
+
+  <!-- GRID -->
+  <div class="products-grid" id="productsGrid"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-brand">
+      <div class="foot-logo">⛧ <span>HELL</span>WEAR</div>
+      <p class="foot-desc">Ropa para los que viven entre la oscuridad y el estilo.</p>
+    </div>
+    <div class="foot-col"><h4 data-i18n="foot_tienda">Tienda</h4><ul>
+      <li onclick="location.href='catalogo.html'">Catálogo</li>
+      <li onclick="location.href='ofertas.html'">Ofertas</li>
+      <li onclick="location.href='categorias.html'">Categorías</li>
+    </ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_ayuda">Ayuda</h4><ul><li>FAQ</li><li>Envíos</li><li>Devoluciones</li></ul></div>
+    <div class="foot-col"><h4 data-i18n="foot_siguenos">Síguenos</h4><ul><li>Instagram</li><li>TikTok</li><li>Twitter/X</li></ul></div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2025 HELLWEAR</span>
+      <span class="foot-sigil">⛧ ⛧ ⛧</span>
+    </div>
+  </footer>
+
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-head">
+      <div class="cart-head-title" data-i18n="carrito_titulo">⛧ CARRITO</div>
+      <button class="cart-close" onclick="toggleCart()">✕</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="cart-total-label" data-i18n="carrito_total">Total</span>
+        <span class="cart-total-amount" id="cartTotal">$0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;" onclick="checkout()" data-i18n="carrito_pagar">Proceder al pago</button>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script>
+    let currentFilter = 'all';
+    let currentSort   = 'default';
+    let searchQuery   = '';
+
+    function setFilter(cat, btn) {
+      currentFilter = cat;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderGrid();
+    }
+
+    function setSort(val) {
+      currentSort = val;
+      renderGrid();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val.toLowerCase();
+      renderGrid();
+    }
+
+    function renderGrid() {
+      let list = [...PRODUCTS];
+      if (currentFilter !== 'all') list = list.filter(p => p.cat === currentFilter);
+      if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery));
+      if (currentSort === 'price-asc')  list.sort((a,b) => a.price - b.price);
+      if (currentSort === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (currentSort === 'stars')      list.sort((a,b) => b.stars - a.stars);
+      if (currentSort === 'sale')       list = list.filter(p => p.badge === 'sale').concat(list.filter(p => p.badge !== 'sale'));
+
+      const grid = document.getElementById('productsGrid');
+      document.getElementById('resultCount').textContent = list.length + ' producto' + (list.length!==1?'s':'');
+
+      if (list.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><span class="icon">🔍</span>No se encontraron productos.</div>`;
+        return;
+      }
+      grid.innerHTML = list.map(p => productCard(p)).join('');
+    }
+
+    function toggleSearch() {
+      document.getElementById('searchBar').classList.toggle('open');
+      if (document.getElementById('searchBar').classList.contains('open'))
+        document.getElementById('searchInput').focus();
+    }
+
+    // Check URL params
+    const params = new URLSearchParams(location.search);
+    const catParam = params.get('cat');
+    const qParam   = params.get('q');
+
+    if (catParam) {
+      currentFilter = catParam;
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+        if (b.getAttribute('onclick')?.includes(`'${catParam}'`)) b.classList.add('active');
+      });
+    }
+    if (qParam) {
+      searchQuery = qParam.toLowerCase();
+      const si = document.getElementById('searchInput');
+      if (si) si.value = qParam;
+    }
+
+    renderGrid();
+  </script>
+
+  <script>
+    function toggleMobileMenu() {
+      const m = document.getElementById('mobileMenu');
+      const h = document.getElementById('hamburger');
+      m.classList.toggle('open');
+      h.textContent = m.classList.contains('open') ? '✕' : '☰';
+    }
+    function closeMobileMenu() {
+      document.getElementById('mobileMenu').classList.remove('open');
+      document.getElementById('hamburger').textContent = '☰';
+    }
+  </script>
+  <script src="hw-i18n.js"></script>
+  <script src="hw-data.js"></script>
+  <script src="hw-cart.js"></script>
+  <script src="hw-contact.js"></script>
+</body>
+</html>
