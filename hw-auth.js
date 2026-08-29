@@ -4,7 +4,7 @@
 //  <script src="hw-auth.js"></script>
 // ══════════════════════════════════════════════════════════
 
-const API = 'http://localhost:3000/api';
+const API = '/api';
 
 // ── Estado global ──────────────────────────────────────────
 let usuarioActual = null;
