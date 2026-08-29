@@ -3,6 +3,8 @@
 //  node server.js
 // ══════════════════════════════════════════════════════════
 
+require('dotenv').config();
+
 const express      = require('express');
 const bcrypt       = require('bcryptjs');
 const jwt          = require('jsonwebtoken');
@@ -19,6 +21,12 @@ const {
 
 const app    = express();
 const PORT   = process.env.PORT || 3000;
+
+// Railway (y la mayoría de plataformas cloud) terminan el HTTPS en su proxy
+// y reenvían la petición como HTTP interno. Esto le dice a Express que confíe
+// en la cabecera X-Forwarded-Proto para saber si la conexión original era HTTPS,
+// necesario para que las cookies "secure" funcionen en producción.
+app.set('trust proxy', 1);
 
 // ⚠️  CAMBIA ESTA CLAVE en producción:
 // node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"

@@ -87,7 +87,7 @@ function cabecerasSeguras(req, res, next) {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; " +
     "font-src 'self' https://fonts.gstatic.com; " +
     "img-src 'self' data:; " +
-    "connect-src 'self' http://localhost:3000; " +
+    "connect-src 'self'; " +
     "frame-ancestors 'none';"
   );
   // Eliminar cabecera que revela tecnología usada
