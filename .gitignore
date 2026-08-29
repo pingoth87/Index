@@ -1,0 +1,18 @@
+# Dependencias
+node_modules/
+
+# Variables de entorno con secretos (JWT_SECRET, etc.)
+.env
+
+# Base de datos local (contiene datos reales de clientes)
+backend/*.db
+backend/*.db-journal
+backend/*.db-wal
+backend/*.db-shm
+
+# Logs de seguridad (contienen IPs y eventos de login)
+backend/security.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
