@@ -435,18 +435,11 @@
   }
 
   function enviarForm(e){e.preventDefault();showToast('⛧ Mensaje enviado');e.target.reset();}
-  function getCart(){try{return JSON.parse(localStorage.getItem('hw_cart')||'[]');}catch{return[];}}
-  function saveCart(c){localStorage.setItem('hw_cart',JSON.stringify(c));}
-  function removeFromCart(id){saveCart(getCart().filter(i=>i.id!==id));renderCart();}
-  function renderCart(){const cart=getCart();const total=cart.reduce((s,i)=>s+i.price*i.qty,0);document.getElementById('cartCount').textContent=cart.reduce((s,i)=>s+i.qty,0);document.getElementById('cartTotal').textContent='$'+total.toLocaleString('es-CO');const el=document.getElementById('cartItems');if(!cart.length){el.innerHTML='<div class="cart-empty"><span class="icon">🛒</span>Tu carrito está vacío.</div>';return;}el.innerHTML=cart.map(i=>`<div class="cart-item"><div class="cart-item-img">${i.emoji||'🩸'}</div><div><div class="cart-item-name">${i.name}${i.qty>1?' x'+i.qty:''}</div><div class="cart-item-price">$${(i.price*i.qty).toLocaleString('es-CO')}</div></div><button class="cart-item-remove" onclick="removeFromCart(${i.id})">✕</button></div>`).join('');}
-  function toggleCart(){document.getElementById('cartDrawer').classList.toggle('open');document.getElementById('cartOverlay').classList.toggle('open');}
-  function checkout(){if(!getCart().length){showToast('El carrito está vacío');return;}showToast('¡Pedido realizado! 🔥');saveCart([]);renderCart();toggleCart();}
-  let toastT;
 </script>
 
   <script src="hw-i18n.js"></script>
   <script src="hw-data.js"></script>
-  <script src="hw-cart.js"></script>
+  <script src="hw-auth.js"></script>
   <script src="hw-contact.js"></script>
 </body>
 </html>
